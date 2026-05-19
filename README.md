@@ -1,3 +1,5 @@
+# EX-NO-9-RSA-Algorithm
+
 ## AIM:
 To Implement RSA Encryption Algorithm in Cryptography
 
@@ -34,88 +36,45 @@ Step 5: **Security Foundation
 The security of RSA relies on the difficulty of factoring large numbers; thus, choosing sufficiently large prime numbers for \( p \) and \( q \) is crucial for security.
 
 ## Program:
-~~~
+```c
 #include <stdio.h>
-#include <math.h>
-int gcd(int a, int b) {
-    while (b != 0) {
-        int temp = b;
-        b = a % b;
-        a = temp;
-    }
-    return a;
+#include <string.h>
+int gcd(int a, int b) { return b ? gcd(b, a % b) : a; }
+int modExp(int base, int exp, int mod) {
+int res = 1;
+while (exp) {
+if (exp & 1) res = (res * base) % mod;
+base = (base * base) % mod;
+exp >>= 1;
 }
-int mod_exp(int base, int exp, int mod) {
-    int result = 1;
-    base = base % mod;
-    
-    while (exp > 0) {
-        if (exp % 2 == 1) {
-            result = (result * base) % mod;
-        }
-        exp = exp >> 1;  
-        base = (base * base) % mod;
-    }
-    
-    return result;
+return res;
 }
-int mod_inverse(int e, int phi_n) {
-    int t = 0, new_t = 1;
-    int r = phi_n, new_r = e;
-    
-    while (new_r != 0) {
-        int quotient = r / new_r;
-        int temp_t = t;
-        t = new_t;
-        new_t = temp_t - quotient * new_t;
-        
-        int temp_r = r;
-        r = new_r;
-        new_r = temp_r - quotient * new_r;
-    }
-    
-    if (r > 1) return -1;  
-    if (t < 0) t += phi_n;
-    return t;
+int modInv(int a, int m) {
+int m0 = m, x0 = 0, x1 = 1;
+while (a > 1) {
+int q = a / m, t = m;
+m = a % m; a = t;
+t = x0; x0 = x1 - q * x0; x1 = t;
+}
+return x1 < 0 ? x1 + m0 : x1;
 }
 int main() {
-    int p, q, n, phi_n, e, d;
-    int message, encrypted_message, decrypted_message;
-    printf("Enter a prime number (p): ");
-    scanf("%d", &p);
-    printf("Enter another prime number (q): ");
-    scanf("%d", &q);
-    n = p * q;
-    phi_n = (p - 1) * (q - 1);
-    do {
-        printf("Enter a value for public key exponent (e) such that 1 < e < %d: ", phi_n);
-        scanf("%d", &e);
-    } while (gcd(e, phi_n) != 1);
-    
-    d = mod_inverse(e, phi_n);
-    if (d == -1) {
-        printf("Modular inverse does not exist for the given 'e'. Exiting.\n");
-        return 1;
-    }
-    printf("Public key: (n = %d, e = %d)\n", n, e);
-    printf("Private key: (n = %d, d = %d)\n", n, d);
-    
-    printf("Enter the message to encrypt (as an integer): ");
-    scanf("%d", &message);
-    encrypted_message = mod_exp(message, e, n);
-    printf("Encrypted message: %d\n", encrypted_message);
-    decrypted_message = mod_exp(encrypted_message, d, n);
-    printf("Decrypted message: %d\n", decrypted_message);
-    
-    return 0;
+int p = 61, q = 53, n = p * q, phi = (p - 1) * (q - 1), e = 17;
+while (gcd(e, phi) != 1) e++;
+int d = modInv(e, phi);
+char msg[100]; printf("Enter plaintext: "); scanf("%s", msg);
+printf("Encrypted: "); for (int i = 0; msg[i]; i++) printf("%d ", modExp(msg[i], e,n));
+printf("\nDecrypted: "); for (int i = 0; msg[i]; i++) printf("%c",
+modExp(modExp(msg[i], e, n), d, n));
+return 0;
 }
-~~~
+```
+
 
 ## Output:
+<img width="589" height="316" alt="image" src="https://github.com/user-attachments/assets/c54e5be3-cd1c-4374-a8f8-97ae5f5f29cb" />
 
-<img width="1885" height="905" alt="image" src="https://github.com/user-attachments/assets/7fda8659-4924-44cc-ae35-94cf92dd5a75" />
-<img width="949" height="694" alt="image" src="https://github.com/user-attachments/assets/f5bdf200-e2b1-433d-bf14-9cc5d3c1e950" />
 
 
 ## Result:
- The program is executed successfully.
+ Thus, the code for RSAAlgorithm for a practical application like URL Encryption is executed successfully.
